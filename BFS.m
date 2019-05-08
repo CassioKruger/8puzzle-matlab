@@ -66,28 +66,28 @@ function [passos,iteracoes,inversoes,flag_solucao,estado_atual] = BFS(estado_ini
                 grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
             end
         end
-    
+
         if(lin > 1)
             auxElemento = grafo.fronteira{atual}(lin-1, col);   % salva o valor que esta embaixo do vazio
             auxMatriz = grafo.fronteira{atual};
             auxMatriz(lin-1, col) = 0;                          % move o espaco vazio
             auxMatriz(lin, col) = auxElemento;                  % move o elemento para o espaco vazio anterior
             grafo.fronteira(end+1) = {auxMatriz};               % add o novo estado na fronteira
-    
+
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
             flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
                 grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
             end
         end
-    
+
         if(col > 1)    
             auxElemento = grafo.fronteira{atual}(lin, col-1);  % salva o valor que esta na esquerda do vazio
             auxMatriz = grafo.fronteira{atual};
             auxMatriz(lin, col-1) = 0;                          % move o espaco vazio
             auxMatriz(lin, col) = auxElemento;                  % move o elemento para o espaco vazio anterior
             grafo.fronteira(end+1) = {auxMatriz};              % add o novo estado na fronteira
-    
+
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
             flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
@@ -101,20 +101,20 @@ function [passos,iteracoes,inversoes,flag_solucao,estado_atual] = BFS(estado_ini
             auxMatriz(lin, col+1) = 0;                         % move o espaco vazio
             auxMatriz(lin,col) = auxElemento;                  % move o elemento para o espaco vazio anterior
             grafo.fronteira(end+1) = {auxMatriz};              % add o novo estado na fronteira
-    
+
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
             flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
                 grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
             end
         end
-    
+
         grafo.visitados(aberto) = grafo.fronteira(atual);      % salva o estado atual nos visitados
         grafo.fronteira(atual) = [];                           % retira o estado recem aberto da fronteira
-    
+
         aberto = aberto + 1;
         %atual = atual + 1;
-        
+
     end
         
 

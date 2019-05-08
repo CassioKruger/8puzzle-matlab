@@ -20,8 +20,6 @@ grafo.fronteira(atual) = {start}
 % movimentando para gerar novos estados
 for r = 1:2
 
-    
-
     [lin, col] = find( grafo.fronteira{atual} == 0);        %procura a posicao do zero na matriz e retorna lin e col;
 
     % movimentacoes
