@@ -126,12 +126,12 @@ function ASTAR_Callback(hObject, eventdata, handles)
     estadoInicial = str2num(get(handles.estado_inicial,'String'));
     estadoMeta = str2num(get(handles.estado_meta,'String'));
 
-    START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
-    GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
-
-    if (size(START) ~= [3 3] | sum(sum(START)) ~= 36)
+    if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+        GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
+
         [abertosEstrela,passosEstrela] = estrela(START,GOAL);
 
         iteracoes = length(abertosEstrela)
@@ -168,12 +168,11 @@ function BFS_Callback(hObject, eventdata, handles)
     estadoMeta = str2num(get(handles.estado_meta,'String'));
     limite = str2num(get(handles.limiteProfundidade,'String'));
 
-    START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
-    GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
-
-    if (size(START) ~= [3 3] | sum(sum(START)) ~= 36)
+    if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+        GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
         [abertosLargura,passosLargura] = largura(START,GOAL);
 
         iteracoes = length(abertosLargura)
@@ -209,13 +208,12 @@ function DFS_Callback(hObject, eventdata, handles)
     estadoInicial = str2num(get(handles.estado_inicial,'String'));
     estadoMeta = str2num(get(handles.estado_meta,'String'));
     limite = str2num(get(handles.limiteProfundidade,'String'));
-
-    START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
-    GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]    
-
-    if (size(START) ~= [3 3] | sum(sum(START)) ~= 36)
+  
+    if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+        GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]  
         [abertosProfundidade,passosProfundidade] = profundidade(START,GOAL,limite);
 
         iteracoes = length(abertosProfundidade)
