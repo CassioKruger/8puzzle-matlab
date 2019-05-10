@@ -2,8 +2,10 @@ function [passos,iteracoes,inversoes,flag_solucao,estado_atual] = BFS(estado_ini
 
     % inicializando variaveis
     atual = 1;              % indice para as estruturas
-    flag_terminou = 0;      % flag para indicar se o estado meta foi aberto
-     
+    aberto = 1;
+    custo = 1;
+    flagTerminou = 0;
+        
     passos = 0;
     iteracoes = 0;
     inversoes = 0;
@@ -18,13 +20,7 @@ function [passos,iteracoes,inversoes,flag_solucao,estado_atual] = BFS(estado_ini
     goal = [estado_meta(1:3);estado_meta(4:6);estado_meta(7:9)];
     
     estado_atual = sprintf('%d', estado_inicial);   % para printar    
-    
-    grafo.fronteira(atual) = {start};           % add estado inicial ao grafo (primeira camada)
-    grafo.fronteira{atual}  
-    
-    grafo.meta(1) = {goal};                     % add estado meta ao grafo
-    grafo.meta{:}
-    
+       
     % verificacao se para o estado inicial, existe solucao -> IMPAR: sem solucao; PAR: com solucao
     for col = 1:8
         for aux = (col+1):9
@@ -51,69 +47,77 @@ function [passos,iteracoes,inversoes,flag_solucao,estado_atual] = BFS(estado_ini
         % se estiver nas laterais, mas no quadrado do meio, possui mais 3 movimentos possiveis;
         % se estiver no meio, possui mais 4 movimentos possiveis;
 
-        [lin, col] = find( grafo.fronteira{atual} == 0);        %procura a posicao do zero na matriz e retorna lin e col;
+        custo = custo + 1;
+        grafo(atual).pais = grafo(atual).fronteira;
+        %grafo(atual).custo = grafo(atual).custoFronteira;
+
+        [lin, col] = find( grafo(atual).fronteira == 0);          %procura a posicao do zero na matriz e retorna lin e col;
 
         % movimentacoes
         if(lin < 3)
-            auxElemento = grafo.fronteira{atual}(lin+1, col);   % salva o valor que esta em cima do vazio
-            auxMatriz = grafo.fronteira{atual};
-            auxMatriz(lin+1, col) = 0;                          % move o espaco vazio
-            auxMatriz(lin, col) = auxElemento;                  % move o elemento para o espaco vazio anterior
+            auxElemento = grafo(atual).fronteira(lin+1, col);     % salva o valor que esta em cima do vazio
+            auxMatriz = grafo(atual).fronteira;
+            auxMatriz(lin+1, col) = 0;                            % move o espaco vazio
+            auxMatriz(lin, col) = auxElemento;                    % move o elemento para o espaco vazio anterior
             
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
-            flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
+            flagJaAberto = sum(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
-                grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
+                grafo(end+1).fronteira = auxMatriz;               % add o novo estado na fronteira
+                grafo(end).custoFronteira = custo;                % custo do inicio até o novo estado
             end
         end
 
         if(lin > 1)
-            auxElemento = grafo.fronteira{atual}(lin-1, col);   % salva o valor que esta embaixo do vazio
-            auxMatriz = grafo.fronteira{atual};
-            auxMatriz(lin-1, col) = 0;                          % move o espaco vazio
-            auxMatriz(lin, col) = auxElemento;                  % move o elemento para o espaco vazio anterior
-            grafo.fronteira(end+1) = {auxMatriz};               % add o novo estado na fronteira
-
+            auxElemento = grafo(atual).fronteira(lin-1, col);     % salva o valor que esta embaixo do vazio
+            auxMatriz = grafo(atual).fronteira;
+            auxMatriz(lin-1, col) = 0;                            % move o espaco vazio
+            auxMatriz(lin, col) = auxElemento;                    % move o elemento para o espaco vazio anterior
+            
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
-            flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
+            flagJaAberto = sum(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
-                grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
+                grafo(end+1).fronteira = auxMatriz;               % add o novo estado na fronteira
+                grafo(end).custoFronteira = custo;
             end
         end
 
         if(col > 1)    
-            auxElemento = grafo.fronteira{atual}(lin, col-1);  % salva o valor que esta na esquerda do vazio
-            auxMatriz = grafo.fronteira{atual};
-            auxMatriz(lin, col-1) = 0;                          % move o espaco vazio
-            auxMatriz(lin, col) = auxElemento;                  % move o elemento para o espaco vazio anterior
-            grafo.fronteira(end+1) = {auxMatriz};              % add o novo estado na fronteira
-
+            auxElemento = grafo(atual).fronteira(lin, col-1);     % salva o valor que esta na esquerda do vazio
+            auxMatriz = grafo(atual).fronteira;
+            auxMatriz(lin, col-1) = 0;                            % move o espaco vazio
+            auxMatriz(lin, col) = auxElemento;                    % move o elemento para o espaco vazio anterior
+            
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
-            flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
+            flagJaAberto = sum(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
-                grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
+                grafo(end+1).fronteira = auxMatriz;               % add o novo estado na fronteira
+                grafo(end).custoFronteira = custo;
             end
         end
         
         if(col < 3)
-            auxElemento = grafo.fronteira{atual}(lin, col+1);  % salva o valor que esta na direita do vazio   
-            auxMatriz = grafo.fronteira{atual};
-            auxMatriz(lin, col+1) = 0;                         % move o espaco vazio
-            auxMatriz(lin,col) = auxElemento;                  % move o elemento para o espaco vazio anterior
-            grafo.fronteira(end+1) = {auxMatriz};              % add o novo estado na fronteira
-
+            auxElemento = grafo(atual).fronteira(lin, col+1);  % salva o valor que esta na direita do vazio   
+            auxMatriz = grafo(atual).fronteira;
+            auxMatriz(lin, col+1) = 0;                           % move o espaco vazio
+            auxMatriz(lin,col) = auxElemento;                    % move o elemento para o espaco vazio anterior
+            
             % verifica se o novo estado já foi visitado antes; caso sim, nao add na fronteira
-            flagJaAberto = find(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
+            flagJaAberto = sum(arrayfun(@(s) (isequal(auxMatriz, s.fronteira)==1), grafo));
             if flagJaAberto == 0
-                grafo.fronteira(end+1) = {auxMatriz};           % add o novo estado na fronteira
+                grafo(end+1).fronteira = auxMatriz;           % add o novo estado na fronteira
+                grafo(end).custoFronteira = custo;
             end
         end
 
-        grafo.visitados(aberto) = grafo.fronteira(atual);      % salva o estado atual nos visitados
-        grafo.fronteira(atual) = [];                           % retira o estado recem aberto da fronteira
+        grafo(aberto).visitados = grafo(atual).fronteira;      % salva o estado atual nos visitados
+        grafo(aberto).custo = grafo(atual).custoFronteira;     % salva o custo do estado recem aberto
+        
+        grafo(atual).fronteira = [];                           % retira o estado recem aberto da fronteira
+        grafo(atual).custoFronteira = [];                      % retira o custo do estado recem aberto 
 
         aberto = aberto + 1;
-        %atual = atual + 1;
+        atual = atual + 1;
 
     end
         

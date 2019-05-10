@@ -22,7 +22,7 @@ function varargout = GUI8puzzle(varargin)
 
 % Edit the above text to modify the response to help GUI8puzzle
 
-% Last Modified by GUIDE v2.5 02-May-2019 17:24:22
+% Last Modified by GUIDE v2.5 10-May-2019 13:36:28
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -119,30 +119,39 @@ end
 
 % --- Executes on button press in ASTAR.
 function ASTAR_Callback(hObject, eventdata, handles)
+    set(handles.SOL_TEXTO,'String','Processando');    
     START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
-
+    
     %aquisicao do estado inicial e final
-    START = str2num(get(handles.estado_inicial,'String'));
-    GOAL = str2num(get(handles.estado_meta,'String'));
+    estadoInicial = str2num(get(handles.estado_inicial,'String'));
+    estadoMeta = str2num(get(handles.estado_meta,'String'));
 
-    [passos,iteracoes,inversoes,flag_solucao,estado_atual] = ASTAR(START,GOAL);
+    START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+    GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
 
-    if(flag_solucao == 1)
-        iteracoes = sprintf('%i',iteracoes);
-        set(handles.SOL_TEXTO,'String','Solucionado: A*');
-        set(handles.MOVIMENTOS,'String', iteracoes);
-
-        assignin('base','passos',passos);
-        [nao,numero_de_passos] = size(passos);
-        
-        set(handles.SLIDER_ESTADOS,'Min',1);
-        set(handles.SLIDER_ESTADOS,'Max',numero_de_passos);
-        set(handles.SLIDER_ESTADOS,'Value',1);
-        set(handles.SLIDER_ESTADOS,'SliderStep',[1/(numero_de_passos-1), 1/(numero_de_passos-1)]);
-        
+    if (size(START) ~= [3 3] | sum(sum(START)) ~= 36)
+        set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
-        set(handles.SOL_TEXTO, 'String', 'Numero impar de inversoes! Sem solucao');
+        [abertosEstrela,passosEstrela] = estrela(START,GOAL);
+
+        iteracoes = length(abertosEstrela)
+        passos = length(passosEstrela)
+
+        iteracoes = sprintf('%i',iteracoes);
+        set(handles.SOL_TEXTO,'String','A*','ForegroundColor','green');
+        set(handles.MOVIMENTOS,'String', iteracoes);
+        set(handles.SOLUCAO_MOVI,'String', passos);
+
+        assignin('base','passos',passosEstrela);
+        assignin('base','abertos',abertosEstrela);
+            
+        set(handles.SLIDER_ESTADOS,'Min',1);
+        set(handles.SLIDER_ESTADOS,'Max',passos);
+        set(handles.SLIDER_ESTADOS,'Value',1);
+        set(handles.SLIDER_ESTADOS,'SliderStep',[1/(passos-1), 1/(passos-1)]);
+        SLIDER_ESTADOS_Callback(handles.SLIDER_ESTADOS, eventdata, handles);
     end
+    
 % hObject    handle to ASTAR (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -150,36 +159,40 @@ function ASTAR_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in BFS.
 function BFS_Callback(hObject, eventdata, handles)
+    set(handles.SOL_TEXTO,'String','Processando');
     %inicializando a variavel
-    START = [0 0 0; 0 0 0; 0 0 0];  
+    START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
 
     %aquisicao do estado inicial e final
-    START = str2num(get(handles.estado_inicial,'String'));
-    GOAL = str2num(get(handles.estado_meta,'String'));
+    estadoInicial = str2num(get(handles.estado_inicial,'String'));
+    estadoMeta = str2num(get(handles.estado_meta,'String'));
+    limite = str2num(get(handles.limiteProfundidade,'String'));
 
-    [passos,iteracoes,inversoes,flag_solucao,estado_atual] = BFS(START,GOAL)
+    START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+    GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
 
-    if(flag_solucao == 1)
-        iteracoes = sprintf('%i',iteracoes);
-        set(handles.SOL_TEXTO,'String','Solucionado: BFS');
-        set(handles.MOVIMENTOS,'String', iteracoes);
-
-        assignin('base','passos',passos);
-        [nao,numero_de_passos] = size(passos);
-        
-        set(handles.SLIDER_ESTADOS,'Min',1);
-        set(handles.SLIDER_ESTADOS,'Max',numero_de_passos);
-        set(handles.SLIDER_ESTADOS,'Value',1);
-        set(handles.SLIDER_ESTADOS,'SliderStep',[1/(numero_de_passos-1), 1/(numero_de_passos-1)]);
-        
+    if (size(START) ~= [3 3] | sum(sum(START)) ~= 36)
+        set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
-        set(handles.SOL_TEXTO, 'String', 'Numero impar de inversoes! Sem solucao');
-    end
-    
+        [abertosLargura,passosLargura] = largura(START,GOAL);
 
-    %SOL_TEXTO
-    %MOVIMENTOS
-    %SOLUCAO_MOVI
+        iteracoes = length(abertosLargura)
+        passos = length(passosLargura)
+
+        iteracoes = sprintf('%i',iteracoes);
+        set(handles.SOL_TEXTO,'String','LARGURA','ForegroundColor','green');
+        set(handles.MOVIMENTOS,'String', iteracoes);
+        set(handles.SOLUCAO_MOVI,'String', passos);
+
+        assignin('base','passos',passosLargura);
+            
+        set(handles.SLIDER_ESTADOS,'Min',1);
+        set(handles.SLIDER_ESTADOS,'Max',passos);
+        set(handles.SLIDER_ESTADOS,'Value',1);
+        set(handles.SLIDER_ESTADOS,'SliderStep',[1/(passos-1), 1/(passos-1)]);
+        SLIDER_ESTADOS_Callback(handles.SLIDER_ESTADOS, eventdata, handles);  
+    end  
+
     
 % hObject    handle to BFS (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -188,7 +201,57 @@ function BFS_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in DFS.
 function DFS_Callback(hObject, eventdata, handles)
+    set(handles.SOL_TEXTO,'String','Processando');
+    %inicializando a variavel
     START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
+
+    %aquisicao do estado inicial e final
+    estadoInicial = str2num(get(handles.estado_inicial,'String'));
+    estadoMeta = str2num(get(handles.estado_meta,'String'));
+    limite = str2num(get(handles.limiteProfundidade,'String'));
+
+    START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+    GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]    
+
+    if (size(START) ~= [3 3] | sum(sum(START)) ~= 36)
+        set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
+    else
+        [abertosProfundidade,passosProfundidade] = profundidade(START,GOAL,limite);
+
+        iteracoes = length(abertosProfundidade)
+        passos = length(passosProfundidade)
+
+        if (passos > 1)                                                                  % se encontrou solucao
+            iteracoes = sprintf('%i',iteracoes);
+            set(handles.SOL_TEXTO,'String','PROFUNDIDADE','ForegroundColor','green');
+            set(handles.MOVIMENTOS,'String', iteracoes);
+            set(handles.SOLUCAO_MOVI,'String', passos);
+
+            assignin('base','passos',passosProfundidade);
+                
+            set(handles.SLIDER_ESTADOS,'Min',1);
+            set(handles.SLIDER_ESTADOS,'Max',passos);
+            set(handles.SLIDER_ESTADOS,'Value',1);
+            set(handles.SLIDER_ESTADOS,'SliderStep',[1/(passos-1), 1/(passos-1)]);
+            SLIDER_ESTADOS_Callback(handles.SLIDER_ESTADOS, eventdata, handles); 
+        else                                                                              % se nao encontrou
+            iteracoes = sprintf('%i',iteracoes);
+            set(handles.SOL_TEXTO,'String','PROFUNDIDADE');
+            set(handles.MOVIMENTOS,'String', 'profundidade insuficiente');
+            set(handles.SOLUCAO_MOVI,'String', 'profundidade insuficiente');
+
+            set(handles.SOL11,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL12,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL13,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL21,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL22,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL23,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL31,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL32,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+            set(handles.SOL33,'FontWeight','bold','ForegroundColor','red','BackgroundColor','black','String','null');
+        end 
+    end
+    
 % hObject    handle to DFS (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -196,6 +259,7 @@ function DFS_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in RRHILL.
 function RRHILL_Callback(hObject, eventdata, handles)
+    set(handles.SOL_TEXTO,'String','Processando');
     START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
 % hObject    handle to RRHILL (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -211,12 +275,12 @@ function SLIDER_ESTADOS_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-    valorAtual = round(get(hObject,'Value'));
-    lista_passos = evalin('base','passos');
-    [nao,numero_de_passos] = size(lista_passos);
+    passoAtual = round(get(hObject,'Value'))
+    listaPassos = evalin('base','passos')
+    steps = length(listaPassos)
     
-    if round(valorAtual) == valorAtual
-        temp = lista_passos{1,numero_de_passos - (valorAtual-1)};
+    if round(passoAtual) == passoAtual
+        temp = listaPassos{passoAtual};
         SOL11 = temp(1,1);
         SOL12 = temp(1,2);
         SOL13 = temp(1,3);
@@ -228,74 +292,74 @@ function SLIDER_ESTADOS_Callback(hObject, eventdata, handles)
         SOL33 = temp(3,3);
         
         if SOL11 == 0
-            set(handles.SOL11,'FontWeight','bold');
+            set(handles.SOL11,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL11,'String',SOL11);
         else
-            set(handles.SOL11,'FontWeight','normal');
+            set(handles.SOL11,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL11,'String',SOL11);
         end
         
         if SOL12 == 0
-            set(handles.SOL12,'FontWeight','bold');
+            set(handles.SOL12,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL12,'String',SOL12);
         else
-            set(handles.SOL12,'FontWeight','normal');
+            set(handles.SOL12,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL12,'String',SOL12);
         end
         
         if SOL13 == 0
-            set(handles.SOL13,'FontWeight','bold');
+            set(handles.SOL13,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL13,'String',SOL13);
         else
-            set(handles.SOL13,'FontWeight','normal');
+            set(handles.SOL13,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL13,'String',SOL13);
         end
         
         if SOL21 == 0
-            set(handles.SOL21,'FontWeight','bold');
+            set(handles.SOL21,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL21,'String',SOL21);
         else
-            set(handles.SOL21,'FontWeight','normal');
+            set(handles.SOL21,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL21,'String',SOL21);
         end
         
         if SOL22 == 0
-            set(handles.SOL22,'FontWeight','bold');
+            set(handles.SOL22,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL22,'String',SOL22);
         else
-            set(handles.SOL22,'FontWeight','normal');
+            set(handles.SOL22,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL22,'String',SOL22);
         end
         
         if SOL23 == 0
-            set(handles.SOL23,'FontWeight','bold');
+            set(handles.SOL23,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL23,'String',SOL23);
         else
-            set(handles.SOL23,'FontWeight','normal');
+            set(handles.SOL23,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL23,'String',SOL23);
         end
         
         if SOL31 == 0
-            set(handles.SOL31,'FontWeight','bold');
+            set(handles.SOL31,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL31,'String',SOL31);
         else
-            set(handles.SOL31,'FontWeight','normal');
+            set(handles.SOL31,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL31,'String',SOL31);
         end
         
         if SOL32 == 0
-            set(handles.SOL32,'FontWeight','bold');
+            set(handles.SOL32,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL32,'String',SOL32);
         else
-            set(handles.SOL32,'FontWeight','normal');
+            set(handles.SOL32,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL32,'String',SOL32);
         end
         
         if SOL33 == 0
-            set(handles.SOL33,'FontWeight','bold');
+            set(handles.SOL33,'FontWeight','bold','ForegroundColor','green','BackgroundColor','black');
             set(handles.SOL33,'String',SOL33);
         else
-            set(handles.SOL33,'FontWeight','normal');
+            set(handles.SOL33,'FontWeight','normal','ForegroundColor','black','BackgroundColor','white');
             set(handles.SOL33,'String',SOL33);
         end
     end
@@ -309,4 +373,27 @@ function SLIDER_ESTADOS_CreateFcn(hObject, eventdata, handles)
 % Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function limiteProfundidade_Callback(hObject, eventdata, handles)
+% hObject    handle to limiteProfundidade (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of limiteProfundidade as text
+%        str2double(get(hObject,'String')) returns contents of limiteProfundidade as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function limiteProfundidade_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to limiteProfundidade (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
