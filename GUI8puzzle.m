@@ -119,9 +119,8 @@ end
 
 % --- Executes on button press in ASTAR.
 function ASTAR_Callback(hObject, eventdata, handles)
-    set(handles.SOL_TEXTO,'String','Processando');    
     START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
-    
+    GOAL = [0 0 0; 0 0 0; 0 0 0];    
     %aquisicao do estado inicial e final
     estadoInicial = str2num(get(handles.estado_inicial,'String'));
     estadoMeta = str2num(get(handles.estado_meta,'String'));
@@ -129,10 +128,12 @@ function ASTAR_Callback(hObject, eventdata, handles)
     if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        set(handles.SOL_TEXTO,'String','Processando','ForegroundColor','blue');   
+
         START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
         GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
 
-        [abertosEstrela,passosEstrela] = estrela(START,GOAL);
+        [abertosEstrela,passosEstrela,TIME] = estrela(START,GOAL);
 
         iteracoes = length(abertosEstrela)
         passos = length(passosEstrela)
@@ -141,6 +142,7 @@ function ASTAR_Callback(hObject, eventdata, handles)
         set(handles.SOL_TEXTO,'String','A*','ForegroundColor','green');
         set(handles.MOVIMENTOS,'String', iteracoes);
         set(handles.SOLUCAO_MOVI,'String', passos);
+        set(handles.tempo,'String',TIME, 'BackgroundColor','black','ForegroundColor','Blue');
 
         assignin('base','passos',passosEstrela);
         assignin('base','abertos',abertosEstrela);
@@ -159,9 +161,9 @@ function ASTAR_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in BFS.
 function BFS_Callback(hObject, eventdata, handles)
-    set(handles.SOL_TEXTO,'String','Processando');
     %inicializando a variavel
-    START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
+    START = [0 0 0; 0 0 0; 0 0 0]; 
+    GOAL = [0 0 0; 0 0 0; 0 0 0];
 
     %aquisicao do estado inicial e final
     estadoInicial = str2num(get(handles.estado_inicial,'String'));
@@ -171,9 +173,12 @@ function BFS_Callback(hObject, eventdata, handles)
     if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        set(handles.SOL_TEXTO,'String','Processando','ForegroundColor','blue');   
+
         START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
         GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
-        [abertosLargura,passosLargura] = largura(START,GOAL);
+        
+        [abertosLargura,passosLargura,TIME] = BFS(START,GOAL);
 
         iteracoes = length(abertosLargura)
         passos = length(passosLargura)
@@ -182,6 +187,7 @@ function BFS_Callback(hObject, eventdata, handles)
         set(handles.SOL_TEXTO,'String','LARGURA','ForegroundColor','green');
         set(handles.MOVIMENTOS,'String', iteracoes);
         set(handles.SOLUCAO_MOVI,'String', passos);
+        set(handles.tempo,'String',TIME, 'BackgroundColor','black','ForegroundColor','Blue');
 
         assignin('base','passos',passosLargura);
             
@@ -200,9 +206,9 @@ function BFS_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in DFS.
 function DFS_Callback(hObject, eventdata, handles)
-    set(handles.SOL_TEXTO,'String','Processando');
     %inicializando a variavel
-    START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
+    START = [0 0 0; 0 0 0; 0 0 0];
+    GOAL = [0 0 0; 0 0 0; 0 0 0];
 
     %aquisicao do estado inicial e final
     estadoInicial = str2num(get(handles.estado_inicial,'String'));
@@ -212,9 +218,12 @@ function DFS_Callback(hObject, eventdata, handles)
     if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        set(handles.SOL_TEXTO,'String','Processando','ForegroundColor','blue'); 
+
         START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
         GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]  
-        [abertosProfundidade,passosProfundidade] = profundidade(START,GOAL,limite);
+
+        [abertosProfundidade,passosProfundidade,TIME] = DFS(START,GOAL,limite);
 
         iteracoes = length(abertosProfundidade)
         passos = length(passosProfundidade)
@@ -224,6 +233,7 @@ function DFS_Callback(hObject, eventdata, handles)
             set(handles.SOL_TEXTO,'String','PROFUNDIDADE','ForegroundColor','green');
             set(handles.MOVIMENTOS,'String', iteracoes);
             set(handles.SOLUCAO_MOVI,'String', passos);
+            set(handles.tempo,'String',TIME, 'BackgroundColor','black','ForegroundColor','Blue');
 
             assignin('base','passos',passosProfundidade);
                 
@@ -256,9 +266,9 @@ function DFS_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on button press in RRHILL.
-function RRHILL_Callback(hObject, eventdata, handles)
-    set(handles.SOL_TEXTO,'String','Processando');    
+function RRHILL_Callback(hObject, eventdata, handles)     
     START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
+    GOAL = [0 0 0; 0 0 0; 0 0 0];
     
     %aquisicao do estado inicial e final
     estadoInicial = str2num(get(handles.estado_inicial,'String'));
@@ -267,10 +277,12 @@ function RRHILL_Callback(hObject, eventdata, handles)
     if (sum(sum(estadoInicial)) ~= 36)
         set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
     else
+        set(handles.SOL_TEXTO,'String','Processando','ForegroundColor','blue');   
+
         START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
         GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
 
-        [abertosHill,passosHill] = hill(START,GOAL);
+        [abertosHill,passosHill,TIME] = hill(START,GOAL);
 
         iteracoes = length(abertosHill)
         passos = length(passosHill)
@@ -279,6 +291,7 @@ function RRHILL_Callback(hObject, eventdata, handles)
         set(handles.SOL_TEXTO,'String','Random Restart Hill Climbing','ForegroundColor','green');
         set(handles.MOVIMENTOS,'String', iteracoes);
         set(handles.SOLUCAO_MOVI,'String', passos);
+        set(handles.tempo,'String',TIME, 'BackgroundColor','black','ForegroundColor','Blue');
 
         assignin('base','passos',passosHill);
         assignin('base','abertos',abertosHill);

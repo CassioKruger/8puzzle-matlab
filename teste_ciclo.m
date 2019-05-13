@@ -1,11 +1,11 @@
-function vizinhos_filtrados = teste_ciclo_estrela(vizinhos,abertov)
+function vizinhos_filtrados = teste_ciclo(vizinhos,abertov)
 
 vizinhos_filtrados = {0};
 limite_vizinhos = length(vizinhos);
 limite_vizinhos = limite_vizinhos-1;
 contador = 0;
 for i = 1:limite_vizinhos                                                    %COMPARA TODOS OS VALORES DE VIZINHOS COM TODOS OS VALORES DO VETOR ABERTO,
-    for j = 1:length(abertov)                                               %CASO HAJA ALGUMA COMBINAï¿½ï¿½O, SOMA NO CONTADOR;
+    for j = 1:length(abertov)                                               %CASO HAJA ALGUMA COMBINAÇÃO, SOMA NO CONTADOR;
         comp = isequal(abertov{j},vizinhos{i});
         if(comp)
            contador = contador + 1; 

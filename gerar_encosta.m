@@ -1,21 +1,25 @@
 function [fechados, reset,maxlocais,maxlocaist,aberto_ciclo,fdc] = encosta(vizinhos, ea, ga, fa, er,maxlocais,maxlocaist,Ef,aberto_ciclo,fdc)
 if(~isempty(vizinhos))
-   %%CALCULA OS CUSTOS F DE CADA MOVIMENTO POSS√çVEL%%
+   %%CALCULA OS CUSTOS F DE CADA MOVIMENTO POSSÕVEL%%
    nvizinhos = length(vizinhos);
    clear custof;
    custof(1:nvizinhos)=100;
    custog = ga + 1;
    for ind = 1:nvizinhos
        estado = vizinhos{ind};
-       custoh1 = heuristica1(ea,Ef);
-       custoh2 = manhattan(ea,Ef);
-       custoh=custoh1+custoh2;
+%        
+%        custoh1 = heuristica1(ea,Ef);
+%        custoh2 = manhattan(ea,Ef);
+%        custoh=custoh1+custoh2;
+       custoh=manhattan(ea,Ef);
+%        custoh=heuristica1(ea,Ef);
+       
        
        custof(ind) = custoh+custog;
    end
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   %%ESCOLHE O MELHOR CUSTO COMO PR√ìXIMO MOVIMENTO
+   %%ESCOLHE O MELHOR CUSTO COMO PR”XIMO MOVIMENTO
    [proximo_f,indice]=min(custof);
    proximo_estado = vizinhos{indice};
    proximo_pai = ea;
@@ -45,9 +49,9 @@ if(~isempty(vizinhos))
    end
    
    
-%CASO N√ÉO EXISTAM MOVIMENTOS POSS√çVEIS   
+%CASO N√O EXISTAM MOVIMENTOS POSSÕVEIS   
 else
-%     disp('N√ì SEM SA√çDA');
+%     disp('N” SEM SAÕDA');
     proximo_estado = zeros(3,3);
     proximo_f = inf;
     if(~isequal(ea,er))
@@ -59,7 +63,7 @@ else
         limite = length(maxlocais)-1;
         k = randi(limite);
         
-        %%TESTA SE O ESTADO INICIAL ALEAT√ìRIO ESCOLHIDO J√Å FOI ESCOLHIDO
+        %%TESTA SE O ESTADO INICIAL ALEAT”RIO ESCOLHIDO J¡ FOI ESCOLHIDO
         %%ANTERIORMENTE!
         aux2 = 0;
         while(~aux2)
@@ -97,7 +101,7 @@ disp(fa);
 disp('proximo estado:');
 disp(proximo_estado);
 disp(proximo_f);
-disp('max locais j√° explorados:')
+disp('max locais j· explorados:')
 aux3=length(maxlocaist);
 disp(aux3);
 disp('total de maximos locais encontrados:')
@@ -106,4 +110,3 @@ disp(aux4);
 
 
 end
-

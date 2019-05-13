@@ -1,4 +1,4 @@
-function [aberto,passos] = estrela(E0, Ef)
+function [aberto,passos,t] = estrela(E0, Ef)
     clc
     tic
     fechados.estado = 0;
@@ -41,8 +41,7 @@ function [aberto,passos] = estrela(E0, Ef)
                 
                 [F_atual,indice] = min(custos);     %Pega o menor custo e seu �ndice
                 
-                
-                E_anterior = E_atual;
+
                 E_atual = fechados(indice).estado;  %Pega o estado valor da fila
                 G_atual = fechados(indice).g;       %Pega a distância dele da origem
                 P_atual = fechados(indice).pai;     %Pega o nó que originou ele
@@ -62,14 +61,14 @@ function [aberto,passos] = estrela(E0, Ef)
                 
                 pos = length(aberto)+1;             %ponteiro
                 aberto(pos).estado=E_atual;         %Adiciona estado atual na lista dos explorados                          
-                aberto(pos).g=G_atual;              %Adiciona o custo de _estrela atual
+                aberto(pos).g=G_atual;              %Adiciona o custo de caminho atual
                 aberto(pos).pai=P_atual;            %Adiciona o pai atual
                 aberto(pos).f = F_atual;            %Adiciona o custo F atual
                 abertov{end}=E_atual;               %Adiciona este estado �s c�lulas explorado
                 abertov{end+1}={};                  %Desloca a c�lula explorada
                 
-                vizinhos=mov_estrela(E_atual);             %Procura vizinhos                
-                vizinhos_filtrados=teste_ciclo_estrela(vizinhos,abertov); %testa se algum movimento é repetido
+                vizinhos=mov(E_atual);             %Procura vizinhos                
+                vizinhos_filtrados=teste_ciclo(vizinhos,abertov); %testa se algum movimento é repetido
                 
                 
                 
@@ -82,8 +81,12 @@ function [aberto,passos] = estrela(E0, Ef)
                     estado = vizinhos_filtrados{ind};
                     pai = E_atual;
                     custog = G_atual + 1;
-%                     custoh = heuristica1(estado,Ef);
-                    custoh = manhattan(estado,Ef);
+                    
+                    %%MELHORES RESULTADOS FORAM OBTIDO SOMANDO AS DUAS
+                    %%HEURISTICAS (MANHATTAN E PE�AS FORA DO LUGAR)
+                    custoh1 = heuristica1(estado,Ef);
+                    custoh2 = manhattan(estado,Ef);
+                    custoh=custoh1+custoh2;
                     custof = custog+custoh;
                     
                     
@@ -104,12 +107,12 @@ function [aberto,passos] = estrela(E0, Ef)
                 
                 if (obj_atingido)
                    clc
-                   passos=caminho_estrela(aberto,E0,Ef);
+                   passos=caminho(aberto,E0,Ef);
                    disp('Passos requeridos:');
                    disp(length(passos));
                    aberto(1)=[];
                    fechados(1)=[];
-                   toc
+                   t=toc;
                 end
                 
                
@@ -118,7 +121,7 @@ function [aberto,passos] = estrela(E0, Ef)
                     passos{1} = E0;
                     disp('todos os n�s conferidos');
                     obj_atingido=1;
-                    toc
+                    t=toc;
                 end 
                 
             end
