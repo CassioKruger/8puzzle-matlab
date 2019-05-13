@@ -4,7 +4,7 @@ function [aberto,passos,t] = hill(E0, Ef)
     estado_reset = E0;
     
     
-    %LISTA DE NÓS NÃO EXPLORADOS:%
+    %LISTA DE NÃ“S NÃƒO EXPLORADOS:%
     fechados.estado=estado_reset;
     fechados.f = 300;
     fechados.g = 0;
@@ -30,7 +30,7 @@ function [aberto,passos,t] = hill(E0, Ef)
     
     
     
-    %%Confere se valores de entrada est?o de acordo:
+    %%Confere se valores de entrada estï¿½o de acordo:
     if(size(E0) ~= [3 3] | sum(sum(E0)) ~= 36)
     passos = {};
     aberto = {};
@@ -50,12 +50,12 @@ function [aberto,passos,t] = hill(E0, Ef)
         
         
         
-        if rem(inversoes, 2) == 0 %Caso o n?mero de invers?es seja PAR:
+        if rem(inversoes, 2) == 0 %Caso o nï¿½mero de inversï¿½es seja PAR:
             while(obj_atingido ~= 1)   
 
  
                 
-                %PROXIMO NÓ A SER EXPLORADO:%
+                %PROXIMO NÃ“ A SER EXPLORADO:%
                 estado_atual=fechados.estado;
                 pai_atual=fechados.pai;
                 g_atual=fechados.g;
@@ -63,7 +63,7 @@ function [aberto,passos,t] = hill(E0, Ef)
                 fechados(1).estado=[];
                 
                 
-                %SALVA ESTE NÓ NA LISTA DE NÓS EXPLORADOS FINAL
+                %SALVA ESTE NÃ“ NA LISTA DE NÃ“S EXPLORADOS FINAL
                 aberto(end).estado = estado_atual;
                 aberto(end).pai = pai_atual;
                 aberto(end).g = g_atual;
@@ -73,14 +73,14 @@ function [aberto,passos,t] = hill(E0, Ef)
                 aberto_ciclo{end}=estado_atual;
                 aberto_ciclo{end+1}={0};
 
-                %BUSCA POSSÍVEIS _hillIMENTOS E FILTRA ELES
+                %BUSCA POSSÃ?VEIS MOVIMENTOS E FILTRA ELES
                 vizinhos = mov(estado_atual);
                 vizinhos_filtro = teste_ciclo(vizinhos,maxlocais);
                 vizinhos_filtro1 = teste_ciclo(vizinhos_filtro, aberto_ciclo);
                 vizinhos_filtro2 = teste_ciclo(vizinhos_filtro1, fdc);
                 vizinhos_filtro2(end)=[];
                 
-                [fechados, estado_reset,maxlocais,maxlocaist,aberto_ciclo,fdc] = gerar_encosta(vizinhos_filtro2, estado_atual, g_atual, f_atual, estado_reset,maxlocais,maxlocaist,Ef,aberto_ciclo,fdc);
+                [fechados, estado_reset,maxlocais,maxlocaist,aberto_ciclo,fdc] = encosta(vizinhos_filtro2, estado_atual, g_atual, f_atual, estado_reset,maxlocais,maxlocaist,Ef,aberto_ciclo,fdc);
                 
 
 
@@ -104,10 +104,11 @@ function [aberto,passos,t] = hill(E0, Ef)
             passos = {};
             aberto = {};
             fechados = {};
-            disp('Formato inv?lido');
+            disp('Formato invï¿½lido');
         end
     end
 end
+
 
 
 
