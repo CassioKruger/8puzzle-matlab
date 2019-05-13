@@ -257,8 +257,38 @@ function DFS_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in RRHILL.
 function RRHILL_Callback(hObject, eventdata, handles)
-    set(handles.SOL_TEXTO,'String','Processando');
+    set(handles.SOL_TEXTO,'String','Processando');    
     START = [0 0 0; 0 0 0; 0 0 0];  %inicializando a variavel
+    
+    %aquisicao do estado inicial e final
+    estadoInicial = str2num(get(handles.estado_inicial,'String'));
+    estadoMeta = str2num(get(handles.estado_meta,'String'));
+
+    if (sum(sum(estadoInicial)) ~= 36)
+        set(handles.SOL_TEXTO,'String','Matriz Invalida!','ForegroundColor','red');     
+    else
+        START = [estadoInicial(1:3);estadoInicial(4:6);estadoInicial(7:9)]
+        GOAL  = [estadoMeta(1:3);estadoMeta(4:6);estadoMeta(7:9)]
+
+        [abertosHill,passosHill] = hill(START,GOAL);
+
+        iteracoes = length(abertosHill)
+        passos = length(passosHill)
+
+        iteracoes = sprintf('%i',iteracoes);
+        set(handles.SOL_TEXTO,'String','Random Restart Hill Climbing','ForegroundColor','green');
+        set(handles.MOVIMENTOS,'String', iteracoes);
+        set(handles.SOLUCAO_MOVI,'String', passos);
+
+        assignin('base','passos',passosHill);
+        assignin('base','abertos',abertosHill);
+            
+        set(handles.SLIDER_ESTADOS,'Min',1);
+        set(handles.SLIDER_ESTADOS,'Max',passos);
+        set(handles.SLIDER_ESTADOS,'Value',1);
+        set(handles.SLIDER_ESTADOS,'SliderStep',[1/(passos-1), 1/(passos-1)]);
+        SLIDER_ESTADOS_Callback(handles.SLIDER_ESTADOS, eventdata, handles);
+    end
 % hObject    handle to RRHILL (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
