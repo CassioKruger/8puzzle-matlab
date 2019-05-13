@@ -1,5 +1,7 @@
 # 8puzzle-matlab
 8 puzzle solver for MATLAB. Using algos BFS, DFS, A* and Random restart hill climbing.
+### Authors
+Gustavo Heck, Franco Caballero e Cássio Kruger.
 
 ## How to use
 1 - Run the "GUI8puzzle.m" at matlab\
